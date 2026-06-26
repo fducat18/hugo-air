@@ -34,7 +34,10 @@
 
             {{ $isActive := false }}
             {{ if ne $menuLink "" }}
-              {{ $homePath := absLangURL "/" | relURL }}
+              {{ $homePath := $.Site.Home.RelPermalink }}
+              {{ if $isSubdirectory }}
+                {{ $homePath = replace $homePath (printf "/%s" $subdirectory) "" }}
+              {{ end }}
 
               <!-- Handle the homepage link specially -->
               {{ if eq $menuLink $homePath }}
