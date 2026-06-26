@@ -4,13 +4,13 @@ The intent of this theme is to provide a solid starting place for Hugo sites wit
 
 ## Live Demo
 
-Just visit [francoiducat.github.io/hugo-air-demo](https://francoiducat.github.io/hugo-air-demo)
+Just visit [fducat18.github.io/hugo-air-demo](https://fducat18.github.io/hugo-air-demo)
 
 ## Local Demo
 
 1. Clone this repository into a folder named `air`:
    ```bash
-   git clone https://github.com/francoiducat/hugo-air.git air
+   git clone https://github.com/fducat18/hugo-air.git air
    ```
 2. Enter the folder: `cd air`
 3. Run the demo:
@@ -40,7 +40,13 @@ Just visit [francoiducat.github.io/hugo-air-demo](https://francoiducat.github.io
 Install Air Theme as a Git Submodule. Naviguate to the folder of your Hugo site run:
 
 ```bash
-git submodule add https://github.com/francoiducat/hugo-air.git themes/air
+git submodule add https://github.com/fducat18/hugo-air.git themes/air
+```
+
+If you clone a Hugo site that already uses this theme as a submodule, initialize it with:
+
+```bash
+git submodule update --init --recursive
 ```
 
 ### Update an existing installation
@@ -289,7 +295,7 @@ If you are developing this theme inside a Hugo site (usually in `themes/air`), r
 ## Screenshot
 
  ### Mobile
-![screenshot](https://francoiducat.github.io/hugo-air/img/hugo-air-theme-mobile.jpg)
+![screenshot](https://fducat18.github.io/hugo-air/img/hugo-air-theme-mobile.jpg)
  
  ### Desktop
-![screenshot](https://francoiducat.github.io/hugo-air/img/hugo-air-theme-desktop.jpg)
+![screenshot](https://fducat18.github.io/hugo-air/img/hugo-air-theme-desktop.jpg)

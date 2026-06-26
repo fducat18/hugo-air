@@ -11,11 +11,11 @@ The intent of this theme is to provide a solid starting place for Hugo sites wit
 
 ## Github Repository
 
-[github.com/francoiducat/hugo-air](https://github.com/francoiducat/hugo-air)
+[github.com/fducat18/hugo-air](https://github.com/fducat18/hugo-air)
 
 ## Demo Site
 
-[francoiducat.github.io/hugo-air-demo](https://francoiducat.github.io/hugo-air-demo) 
+[fducat18.github.io/hugo-air-demo](https://fducat18.github.io/hugo-air-demo) 
 
 ## Features
 
@@ -41,7 +41,7 @@ The intent of this theme is to provide a solid starting place for Hugo sites wit
 Inside the folder of your Hugo site run:
 
 ```bash
-git submodule add https://github.com/francoiducat/hugo-air.git themes/air
+git submodule add https://github.com/fducat18/hugo-air.git themes/air
 ```
 
 ## Usage
@@ -49,7 +49,7 @@ git submodule add https://github.com/francoiducat/hugo-air.git themes/air
 ### Edit your config file
 
 ```yaml
-baseURL: https://francoiducat.github.io/hugo-air-demo/
+baseURL: https://fducat18.github.io/hugo-air-demo/
 languageCode: en-us
 title: Hugo Air Theme
 theme: air

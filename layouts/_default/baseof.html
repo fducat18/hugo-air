@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ or site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
+<html lang="{{ or .Site.Language.Locale .Site.Language.Lang }}" dir="{{ or .Site.Language.Direction `ltr` }}">
 
 {{ partial "head.html" . }}
 {{ partial "google_analytics.html" . }}

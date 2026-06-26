@@ -33,14 +33,16 @@
 
 
             {{ $isActive := false }}
-            {{ $homePath := absLangURL "/" | relURL }}
+            {{ if ne $menuLink "" }}
+              {{ $homePath := absLangURL "/" | relURL }}
 
-            <!-- Handle the homepage link specially -->
-            {{ if eq $menuLink $homePath }}
-              {{ $isActive = eq $currentPage $menuLink }} 
-            {{ else }}
-              <!-- Active logic for non-home pages -->
-              {{ $isActive = or (eq $currentPage $menuLink) (hasPrefix $currentPage $menuLink) }}
+              <!-- Handle the homepage link specially -->
+              {{ if eq $menuLink $homePath }}
+                {{ $isActive = eq $currentPage $menuLink }}
+              {{ else }}
+                <!-- Active logic for non-home pages -->
+                {{ $isActive = or (eq $currentPage $menuLink) (hasPrefix $currentPage $menuLink) }}
+              {{ end }}
             {{ end }}
 
             <!-- Apply the active class if the menu item is active -->
