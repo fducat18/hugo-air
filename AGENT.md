@@ -1,6 +1,6 @@
 # AGENT.md — hugo-air
 
-This repository is a public open-source Hugo theme intended for reuse by multiple websites, including locationyeu.com.
+This repository is a public open-source Hugo theme intended for reuse by multiple websites.
 
 ## Component model
 

@@ -14,7 +14,7 @@ demosite = 'https://fducat18.github.io/hugo-air-demo'
 # Taxonomy terms
 tags = ['gallery', 'blog', 'company', 'website', 'portfolio']
 features = ['responsive', 'images gallery', 'page bundle gallery', 'masonry image gallery', 'instagram image gallery', 'google maps', 'bootstrap', 'shortcodes']
-min_version = '0.140.0'
+min_version = '0.159.2'
 
 # If the theme has a single author
 [author]

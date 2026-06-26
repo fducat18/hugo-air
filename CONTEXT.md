@@ -32,6 +32,10 @@ _Avoid_: private hotfix branch
 Systematic update of repository owner references and public URLs after account transfer.
 _Avoid_: partial URL replacement
 
+**Hugo Runtime Baseline**:
+The minimum Hugo version all supported build systems should run for predictable template and config behavior.
+_Avoid_: mixed runtime versions across CI/CD providers
+
 ## Example dialogue
 
 Consumer dev: "I need a new layout variant for listing pages."
