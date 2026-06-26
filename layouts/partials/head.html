@@ -16,7 +16,8 @@
   {{ end }}
 
   <!-- Open Graph -->
-  <meta property="og:locale" content="{{ (or .Site.Language.Locale .Site.Language.Lang | default "fr_FR") | replace "-" "_" }}">
+  {{ $ogLocale := default "fr_FR" (or .Site.Language.Locale .Site.Language.Lang) }}
+  <meta property="og:locale" content="{{ replace $ogLocale "-" "_" }}">
   <meta property="og:site_name" content="{{ .Site.Title }}">
   <meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
   <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Summary | plainify | truncate 160 }}{{ end }}">
