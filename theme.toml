@@ -2,7 +2,7 @@ name = 'Air'
 license = 'MIT'
 licenselink = 'https://raw.githubusercontent.com/fducat18/hugo-air/refs/heads/main/LICENSE'
 description = 'Hugo Air Theme'
-version = 'v0.1.6'
+version = 'v0.1.7'
 screenshot = '/images/screenshot.jpg/'
 
 # The home page of the theme, where the source can be found
@@ -13,7 +13,7 @@ demosite = 'https://fducat18.github.io/hugo-air-demo'
 
 # Taxonomy terms
 tags = ['gallery', 'blog', 'company', 'website', 'portfolio']
-features = ['responsive', 'images gallery', 'page bundle gallery', 'masonry image gallery', 'instagram image gallery', 'google maps', 'bootstrap', 'shortcodes']
+features = ['responsive', 'images gallery', 'page bundle gallery', 'masonry image gallery', 'instagram image gallery', 'openstreetmap', 'google maps', 'bootstrap', 'shortcodes']
 min_version = '0.147.7'
 
 # If the theme has a single author

@@ -11,6 +11,7 @@ params:
   author:
     name: François
     siteUrl: https://fducat18.github.io/hugo-air-demo/
+  osm_url: https://www.openstreetmap.org/export/embed.html?bbox=-2.4050%2C46.6980%2C-2.3350%2C46.7320&layer=mapnik&marker=46.7141%2C-2.3681
   gmaps_url: https://tinyurl.com/mr3uesbx
   mainColor: "#035c8c"
   footer: "Hugo Air Theme is a great responsive theme!"
@@ -43,6 +44,10 @@ languages:
         pageRef: /features/default-header/
         parent: Features
         weight: 40
+      - name: Responsive OpenStreetMap
+        pageRef: /features/responsive-osm-map
+        parent: Features
+        weight: 45
       - name: Responsive Google Maps
         pageRef: /features/responsive-google-maps
         parent: Features
@@ -91,7 +96,11 @@ languages:
         pageRef: /features/default-header/
         parent: Fonctionnalités
         weight: 40
-      - name: Carte Google Maps Responsive 
+      - name: Carte OpenStreetMap Responsive
+        pageRef: /features/responsive-osm-map
+        parent: Fonctionnalités
+        weight: 45
+      - name: Carte Google Maps Responsive
         pageRef: /features/responsive-google-maps
         parent: Fonctionnalités
         weight: 50

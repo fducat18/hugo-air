@@ -29,7 +29,7 @@ Just visit [fducat18.github.io/hugo-air-demo](https://fducat18.github.io/hugo-ai
 | ✨ Shortcode **Image Gallery** from page bundle (Instagram or Masonry Style) 	 |               
 | ✨ Page Type **Image Gallery** from page bundle (Instagram or Masonry Style)    |
 | ✨ **Single-page** landing homepage   	                                         |
-| ✨ Embedded Google Maps                      	                                   |
+| ✨ Embedded OpenStreetMap & Google Maps                                         |
 | ✨ Smooobu Booking **shortcode**      	                                         |
 | ✨ **Multilingual** Support shortcode      	                                   |
 
@@ -65,7 +65,7 @@ To get started quickly with the example content:
 2.  Copy `themes/air/exampleSite/hugo.yaml` to your project root. **Note:** This will overwrite your existing configuration. If you have existing settings, merge them manually.
 3.  The `hugo.yaml` file contains essential configuration for the theme, including:
     - **Menu Structure**: `menu.main` and `menu.footer`.
-    - **Theme Params**: `params.mainColor`, `params.gmaps_url`, etc.
+    - **Theme Params**: `params.mainColor`, `params.osm_url`, `params.gmaps_url`, etc.
 
 ## Usage
 
@@ -80,7 +80,7 @@ params:
   author:
     name: François
     siteUrl: https://notes.ducatillon.net/
-  gmaps_url: https://www.google.com/maps/d/u/0/embed?mid=1UySq5HRbcRKL90dKuFpX6PRRtx0&ehbc=2E312F
+  osm_url: https://www.openstreetmap.org/export/embed.html?bbox=-2.4050%2C46.6980%2C-2.3350%2C46.7320&layer=mapnik&marker=46.7141%2C-2.3681
   mainColor: "#386641"
   footer: "Hugo Air theme is great and customizable"
 menu:
@@ -147,13 +147,56 @@ It can be overridden in the config file by setting "Params.mainColor" to any col
 }
 ```
 
-### Set Google Maps url
+### Maps Configuration (OpenStreetMap & Google Maps)
 
-In your config file, add:
+Air theme supports embedding interactive maps via **OpenStreetMap** (recommended: lightweight, privacy-friendly, zero external JS) or **Google Maps** (legacy compatibility).
+
+> **Important**: The `osm` and `gmaps` options are **mutually exclusive per page**. Choose one or the other. If both are mistakenly set on the same page, OpenStreetMap takes precedence.
+
+#### 1. OpenStreetMap (Recommended)
+
+1. Set your OpenStreetMap embed URL (standard OSM export or uMap embed URL) in your site configuration:
 
 ```yaml
 params:
-  gmaps_url: https://tinyurl.com/mr3uesbx
+  osm_url: https://www.openstreetmap.org/export/embed.html?bbox=-2.4050%2C46.6980%2C-2.3350%2C46.7320&layer=mapnik&marker=46.7141%2C-2.3681
+```
+
+2. Enable the map in your page front matter:
+
+```yaml
+---
+title: My Page
+osm: true
+---
+```
+
+You can also override `osm_url` directly in the front matter of a specific page:
+
+```yaml
+---
+title: Custom Map Page
+osm: true
+osm_url: https://umap.openstreetmap.fr/fr/map/my-custom-map_12345
+---
+```
+
+#### 2. Google Maps (Legacy Compatibility)
+
+1. Set your Google Maps embed URL in your site configuration:
+
+```yaml
+params:
+  gmaps_url: https://www.google.com/maps/d/u/0/embed?mid=...
+```
+
+2. Enable Google Maps in your page front matter:
+
+```yaml
+---
+title: My Page
+gmaps: true
+---
 ```
 
 ### Customizing Favicon
