@@ -73,7 +73,7 @@
   "image": "{{ "featured-image.jpg" | absURL }}",
   "url": "{{ .Site.BaseURL }}",
   {{ with .Site.Params.telephone }}"telephone": "{{ . }}",{{ end }}
-  {{ with .Site.Params.gmaps_url }}"hasMap": "{{ . }}",{{ end }}
+  {{ with (or .Site.Params.osm_url .Site.Params.gmaps_url) }}"hasMap": "{{ . }}",{{ end }}
   {{ with .Site.Params.schema.address }}
   "address": {
     "@type": "PostalAddress",
