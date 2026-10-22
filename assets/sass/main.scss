@@ -425,9 +425,10 @@ p {
 
 /*
 =======================================================
-=                    Google Maps                      =
+=             OpenStreetMap & Google Maps             =
 =======================================================
 */
+.osm-map,
 .gmaps {
   padding-bottom: 90%;
   overflow: hidden;
@@ -437,17 +438,20 @@ p {
 
 
 @media (min-width: 640px) {
+  .osm-map,
   .gmaps {
     padding-bottom: 30%;
   }
 }
 
+.osm-map iframe,
 .gmaps iframe {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
+  border: 0;
 }
 
 /*
