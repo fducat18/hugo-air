@@ -71,7 +71,7 @@
   </style>
   
   <!-- Custom CSS -->
-  {{ $style := resources.Get "sass/main.scss" | css.Sass | resources.Minify }}
-  <link rel="stylesheet" href="{{ $style.Permalink }}">
+  {{ $style := resources.Get "sass/main.scss" | css.Sass | resources.Minify | resources.Fingerprint }}
+  <link rel="stylesheet" href="{{ $style.Permalink }}" integrity="{{ $style.Data.Integrity }}">
 
 </head>
