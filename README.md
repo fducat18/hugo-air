@@ -163,18 +163,18 @@ Define one or more markers directly in your site configuration (`params.osm_mark
 
 ```yaml
 params:
-  osm_zoom: 17 # Optional default max zoom (default: 16)
+  osm_zoom: 16 # Optional default max zoom (default: 16)
   osm_markers:
-    - title: "Maison Les Plantes"
-      lat: 46.714245
-      lon: -2.368224
-      description: "Villa 250m² sur terrain arboré d'1 ha"
-      link: "/location-vacances-ile-yeu/plantes" # optional link in popup
-    - title: "Maison Les Genets"
-      lat: 46.713611
-      lon: -2.367975
-      description: "Villa de plain-pied accessible PMR"
-      link: "/location-vacances-ile-yeu/genets"
+    - title: "Quartier Libre"
+      lat: 50.643936
+      lon: 3.050444
+      description: "Espace convivial & culturel au bord de la Deûle — Lille"
+      link: "https://www.openstreetmap.org/search?lat=50.643936&lon=3.050444" # optional link in popup
+    - title: "Le p'tit quinquin"
+      lat: 50.637125
+      lon: 3.039490
+      description: "Statue et symbole lillois — Square Foch, Lille"
+      link: "https://www.openstreetmap.org/search?lat=50.637125&lon=3.039490"
 ```
 
 Each marker supports:
