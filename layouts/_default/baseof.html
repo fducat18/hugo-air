@@ -10,8 +10,8 @@
 
   {{ block "main" . }}{{ end }}
 
-  {{ if and (or .Params.osm_url .Site.Params.osm_url) .Params.osm }}
-    {{ partial "embedosm.html" (or .Params.osm_url .Site.Params.osm_url) }}
+  {{ if and (or .Params.osm_markers .Site.Params.osm_markers .Params.osm_url .Site.Params.osm_url) .Params.osm }}
+    {{ partial "embedosm.html" . }}
   {{ else if and (or .Params.gmaps_url .Site.Params.gmaps_url) .Params.gmaps }}
     {{ partial "embedgmaps.html" (or .Params.gmaps_url .Site.Params.gmaps_url) }}
   {{ end }}

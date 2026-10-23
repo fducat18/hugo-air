@@ -73,7 +73,15 @@
   "image": "{{ "featured-image.jpg" | absURL }}",
   "url": "{{ .Site.BaseURL }}",
   {{ with .Site.Params.telephone }}"telephone": "{{ . }}",{{ end }}
-  {{ with (or .Site.Params.osm_url .Site.Params.gmaps_url) }}"hasMap": "{{ . }}",{{ end }}
+  {{ $mapUrl := or .Site.Params.osm_url .Site.Params.gmaps_url }}
+  {{ if and (not $mapUrl) .Site.Params.osm_markers }}
+    {{ with index .Site.Params.osm_markers 0 }}
+      {{ $lat := .lat }}
+      {{ $lon := or .lon .lng }}
+      {{ $mapUrl = printf "https://www.openstreetmap.org/?mlat=%v&mlon=%v#map=16/%v/%v" $lat $lon $lat $lon }}
+    {{ end }}
+  {{ end }}
+  {{ with $mapUrl }}"hasMap": "{{ . }}",{{ end }}
   {{ with .Site.Params.schema.address }}
   "address": {
     "@type": "PostalAddress",

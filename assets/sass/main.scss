@@ -446,6 +446,7 @@ p {
 }
 
 .osm-map iframe,
+.osm-map #osm-map-view,
 .gmaps iframe {
   position: absolute;
   left: 0;

@@ -155,14 +155,51 @@ Air theme supports embedding interactive maps via **OpenStreetMap** (recommended
 
 #### 1. OpenStreetMap (Recommended)
 
-1. Set your OpenStreetMap embed URL (standard OSM export or uMap embed URL) in your site configuration:
+You can configure OpenStreetMap in two ways:
+
+##### A. Interactive Map with Markers (Multi-pin Leaflet Map)
+
+Define one or more markers directly in your site configuration (`params.osm_markers`) or in the page front matter:
+
+```yaml
+params:
+  osm_zoom: 17 # Optional default max zoom (default: 16)
+  osm_markers:
+    - title: "Maison Les Plantes"
+      lat: 46.714245
+      lon: -2.368224
+      description: "Villa 250m² sur terrain arboré d'1 ha"
+      link: "/location-vacances-ile-yeu/plantes" # optional link in popup
+    - title: "Maison Les Genets"
+      lat: 46.713611
+      lon: -2.367975
+      description: "Villa de plain-pied accessible PMR"
+      link: "/location-vacances-ile-yeu/genets"
+```
+
+Each marker supports:
+- `title` (or `name`): popup heading.
+- `lat`: latitude.
+- `lon` (or `lng`): longitude.
+- `description` (or `desc`): optional text shown below title.
+- `link` (or `url`): optional URL making the popup title clickable.
+
+When multiple markers are defined, the map automatically fits the bounds to show all markers at optimal zoom.
+
+##### B. Embed Iframe (Standard OSM Export or uMap)
+
+Alternatively, provide a direct embed URL:
 
 ```yaml
 params:
   osm_url: https://www.openstreetmap.org/export/embed.html?bbox=-2.4050%2C46.6980%2C-2.3350%2C46.7320&layer=mapnik&marker=46.7141%2C-2.3681
+  # or a uMap URL:
+  # osm_url: https://umap.openstreetmap.fr/fr/map/my-custom-map_12345
 ```
 
-2. Enable the map in your page front matter:
+##### Enabling the Map
+
+Enable the map in your page front matter:
 
 ```yaml
 ---
@@ -171,15 +208,7 @@ osm: true
 ---
 ```
 
-You can also override `osm_url` directly in the front matter of a specific page:
-
-```yaml
----
-title: Custom Map Page
-osm: true
-osm_url: https://umap.openstreetmap.fr/fr/map/my-custom-map_12345
----
-```
+You can also override `osm_markers` or `osm_url` per-page directly in the page front matter.
 
 #### 2. Google Maps (Legacy Compatibility)
 
