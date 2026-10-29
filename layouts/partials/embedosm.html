@@ -12,61 +12,73 @@
 
 {{ if $markers }}
 <div class="container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" />
 <div class="gmaps osm-map" style="width: 100%; position: relative;">
-  <div id="osm-map-view" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+  <div id="osm-map-view" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%;"></div>
 </div>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var container = document.getElementById('osm-map-view');
-    if (!container || typeof L === 'undefined') return;
+  (function () {
+    function initOsmMap() {
+      var container = document.getElementById('osm-map-view');
+      if (!container || typeof L === 'undefined') return;
 
-    L.Icon.Default.imagePath = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/';
+      L.Icon.Default.imagePath = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/';
 
-    var markersData = {{ $markers | jsonify | safeJS }};
-    if (!markersData || !markersData.length) return;
+      var markersData = {{ $markers | jsonify | safeJS }};
+      if (!markersData || !markersData.length) return;
 
-    var map = L.map('osm-map-view', {
-      scrollWheelZoom: false
-    });
+      var map = L.map('osm-map-view', {
+        scrollWheelZoom: false
+      });
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
-    }).addTo(map);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+      }).addTo(map);
 
-    var bounds = [];
-    markersData.forEach(function (m) {
-      var lat = m.lat;
-      var lon = (typeof m.lon !== 'undefined') ? m.lon : m.lng;
-      if (typeof lat !== 'undefined' && typeof lon !== 'undefined') {
-        var marker = L.marker([lat, lon]).addTo(map);
-        var title = m.title || m.name || '';
-        var desc = m.description || m.desc || '';
-        var link = m.link || m.url || '';
-        var popupContent = '';
-        if (title && link) {
-          popupContent += '<strong><a href="' + link + '">' + title + '</a></strong>';
-        } else if (title) {
-          popupContent += '<strong>' + title + '</strong>';
+      var bounds = [];
+      markersData.forEach(function (m) {
+        var lat = m.lat;
+        var lon = (typeof m.lon !== 'undefined') ? m.lon : m.lng;
+        if (typeof lat !== 'undefined' && typeof lon !== 'undefined') {
+          var marker = L.marker([lat, lon]).addTo(map);
+          var title = m.title || m.name || '';
+          var desc = m.description || m.desc || '';
+          var link = m.link || m.url || '';
+          var popupContent = '';
+          if (title && link) {
+            popupContent += '<strong><a href="' + link + '">' + title + '</a></strong>';
+          } else if (title) {
+            popupContent += '<strong>' + title + '</strong>';
+          }
+          if (desc) {
+            popupContent += (popupContent ? '<br>' : '') + desc;
+          }
+          if (popupContent) {
+            marker.bindPopup(popupContent);
+          }
+          bounds.push([lat, lon]);
         }
-        if (desc) {
-          popupContent += (popupContent ? '<br>' : '') + desc;
-        }
-        if (popupContent) {
-          marker.bindPopup(popupContent);
-        }
-        bounds.push([lat, lon]);
+      });
+
+      if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: {{ $zoom }} });
+      } else if (bounds.length === 1) {
+        map.setView(bounds[0], {{ $zoom }});
       }
-    });
 
-    if (bounds.length > 1) {
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: {{ $zoom }} });
-    } else if (bounds.length === 1) {
-      map.setView(bounds[0], {{ $zoom }});
+      setTimeout(function () {
+        map.invalidateSize();
+      }, 250);
     }
-  });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initOsmMap);
+    } else {
+      initOsmMap();
+    }
+  })();
 </script>
 {{ else if $url }}
 <div class="container"></div>
