@@ -163,7 +163,7 @@ Define one or more markers directly in your site configuration (`params.osm_mark
 
 ```yaml
 params:
-  osm_zoom: 12 # Optional fixed zoom level (e.g. 12 for island view)
+  osm_zoom: 12 # Optional zoom level
   osm_center: [46.715, -2.355] # Optional custom center [lat, lon]
   osm_markers:
     - title: "Quartier Libre"
@@ -211,7 +211,7 @@ osm: true
 
 You can also override `osm_markers` or `osm_url` per-page directly in the page front matter.
 
-#### 2. Google Maps (Legacy Compatibility)
+#### 2. Google Maps alternative
 
 1. Set your Google Maps embed URL in your site configuration:
 
