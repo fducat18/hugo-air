@@ -163,7 +163,8 @@ Define one or more markers directly in your site configuration (`params.osm_mark
 
 ```yaml
 params:
-  osm_zoom: 16 # Optional default max zoom (default: 16)
+  osm_zoom: 12 # Optional fixed zoom level (e.g. 12 for island view)
+  osm_center: [46.715, -2.355] # Optional custom center [lat, lon]
   osm_markers:
     - title: "Quartier Libre"
       lat: 50.643936
@@ -184,7 +185,7 @@ Each marker supports:
 - `description` (or `desc`): optional text shown below title.
 - `link` (or `url`): optional URL making the popup title clickable.
 
-When multiple markers are defined, the map automatically fits the bounds to show all markers at optimal zoom.
+When `osm_zoom` is specified, the map uses this explicit zoom level (centered on `osm_center` if provided, or on the barycenter of all markers). If `osm_zoom` is omitted, the map automatically fits the bounds (`fitBounds`) to show all markers at optimal zoom.
 
 ##### B. Embed Iframe (Standard OSM Export or uMap)
 

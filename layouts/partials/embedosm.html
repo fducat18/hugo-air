@@ -1,6 +1,7 @@
 {{ $url := "" }}
 {{ $markers := slice }}
-{{ $zoom := 16 }}
+{{ $zoom := "" }}
+{{ $center := slice }}
 
 {{ if eq (printf "%T" .) "string" }}
   {{ $url = . }}
@@ -8,6 +9,7 @@
   {{ $url = or .Params.osm_url .Site.Params.osm_url }}
   {{ $markers = or .Params.osm_markers .Site.Params.osm_markers }}
   {{ with or .Params.osm_zoom .Site.Params.osm_zoom }}{{ $zoom = . }}{{ end }}
+  {{ with or .Params.osm_center .Site.Params.osm_center }}{{ $center = . }}{{ end }}
 {{ end }}
 
 {{ if $markers }}
@@ -62,10 +64,19 @@
         }
       });
 
-      if (bounds.length > 1) {
-        map.fitBounds(bounds, { padding: [50, 50], maxZoom: {{ $zoom }} });
+      var customCenter = {{ $center | jsonify | safeJS }};
+      var customZoom = {{ if ne $zoom "" }}{{ $zoom }}{{ else }}null{{ end }};
+
+      if (customZoom !== null && customCenter && customCenter.length === 2) {
+        map.setView(customCenter, customZoom);
+      } else if (customZoom !== null && bounds.length > 0) {
+        var centerLat = bounds.reduce(function (sum, p) { return sum + p[0]; }, 0) / bounds.length;
+        var centerLon = bounds.reduce(function (sum, p) { return sum + p[1]; }, 0) / bounds.length;
+        map.setView([centerLat, centerLon], customZoom);
+      } else if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
       } else if (bounds.length === 1) {
-        map.setView(bounds[0], {{ $zoom }});
+        map.setView(bounds[0], 16);
       }
 
       setTimeout(function () {
