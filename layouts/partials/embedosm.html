@@ -15,10 +15,12 @@
 {{ if $markers }}
 <div class="container"></div>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-gesture-handling@1.3.0/dist/leaflet-gesture-handling.min.css" />
 <div class="gmaps osm-map" style="width: 100%; position: relative;">
   <div id="osm-map-view" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%;"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-gesture-handling@1.3.0/dist/leaflet-gesture-handling.min.js"></script>
 <script>
   (function () {
     function initOsmMap() {
@@ -31,7 +33,7 @@
       if (!markersData || !markersData.length) return;
 
       var map = L.map('osm-map-view', {
-        scrollWheelZoom: false
+        gestureHandling: true
       });
 
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
