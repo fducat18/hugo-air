@@ -2,17 +2,28 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ if .IsHome }}{{ .Site.Title }}{{ with .Site.Params.titleSuffix }}{{ . }}{{ end }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
-  <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Summary | plainify | truncate 160 }}{{ end }}">
+  {{/* Description: front-matter wins, else a cleaned + truncated summary.
+       Raw markdown markers must never leak into the meta tag. */}}
+  {{ $desc := "" }}
+  {{ with .Description }}{{ $desc = . }}{{ else }}{{ if .IsHome }}{{ $desc = .Site.Params.description }}{{ else }}{{ $desc = .Summary | plainify | htmlUnescape | replaceRE "#" " " | replaceRE "\\s+" " " | truncate 155 }}{{ end }}{{ end }}
+  <meta name="description" content="{{ $desc }}">
   <meta name="keywords" content="{{ with .Site.Params.keywords }}{{ . }}{{ end }}">
   <link rel="canonical" href="{{ .Permalink }}">
   <meta name="robots" content="index, follow">
 
-  <!-- Hreflang Tags -->
+  <!-- Hreflang Tags: self-reference is mandatory, .Translations excludes self;
+       x-default must point at the default-language version. -->
   {{ if .IsTranslated }}
+    <link rel="alternate" hreflang="{{ or .Language.LanguageCode .Language.Lang }}" href="{{ .Permalink }}">
     {{ range .Translations }}
       <link rel="alternate" hreflang="{{ or .Language.LanguageCode .Language.Lang }}" href="{{ .Permalink }}">
     {{ end }}
-    <link rel="alternate" hreflang="x-default" href="{{ .Permalink }}">
+    {{ $defaultLang := site.Sites.Default.Language.Lang }}
+    {{ $xdefault := .Permalink }}
+    {{ range .AllTranslations }}
+      {{ if eq .Language.Lang $defaultLang }}{{ $xdefault = .Permalink }}{{ end }}
+    {{ end }}
+    <link rel="alternate" hreflang="x-default" href="{{ $xdefault }}">
   {{ end }}
 
   <!-- Open Graph -->
@@ -20,7 +31,7 @@
   <meta property="og:locale" content="{{ replace $ogLocale "-" "_" }}">
   <meta property="og:site_name" content="{{ .Site.Title }}">
   <meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
-  <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Summary | plainify | truncate 160 }}{{ end }}">
+  <meta property="og:description" content="{{ $desc }}">
   <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
   <meta property="og:url" content="{{ .Permalink }}">
   {{ $ogImage := "" }}
@@ -41,7 +52,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}">
-  <meta name="twitter:description" content="{{ if .Description }}{{ .Description }}{{ else if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ .Summary | plainify | truncate 160 }}{{ end }}">
+  <meta name="twitter:description" content="{{ $desc }}">
   <meta name="twitter:image" content="{{ $ogImage }}">
 
   <!-- JSON-LD -->
