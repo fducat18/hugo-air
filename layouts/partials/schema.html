@@ -61,6 +61,23 @@
     {{ end }}
   ],
   {{ end }}
+  {{ with .Params.schema.faq }}
+  {{/* FAQPage rich results require mainEntity; only list Q/A that are also
+       visible in the page body (Google requirement). */}}
+  "mainEntity": [
+    {{ range $index, $qa := . }}
+    {{ if $index }},{{ end }}
+    {
+      "@type": "Question",
+      "name": {{ $qa.question | jsonify | safeJS }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ $qa.answer | jsonify | safeJS }}
+      }
+    }
+    {{ end }}
+  ],
+  {{ end }}
   "knowsLanguage": ["fr-FR", "en-GB"]
 }
 </script>
