@@ -74,8 +74,13 @@
   </nav>
 
   <!-- Dynamic Header Image: a real <img> so the largest paint is fetchable,
-       responsive and cacheable instead of a background swapped in by JS -->
-  <div class="headerImage">
+       responsive and cacheable instead of a background swapped in by JS.
+       A ~30px blur of the same image is inlined as the container background so
+       something shows immediately, with a CSS spinner on top until it paints. -->
+  {{/* The blurred placeholder itself is emitted in <head> as a style rule: an
+       inline style attribute holding a base64 data URI survives minification
+       unquoted, and base64 padding ('=') is invalid in an unquoted value. */}}
+  <div class="headerImage{{ if .Resources.Get "featured-image.jpg" }} has-lqip{{ end }}">
     {{ with .Resources.Get "featured-image.jpg" }}
       {{ $large := .Resize "1600x webp q78" }}
       {{ $medium := .Resize "1000x webp q78" }}
