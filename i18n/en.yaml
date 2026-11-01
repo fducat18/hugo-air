@@ -1,0 +1,26 @@
+- id: skip_to_content
+  translation: "Skip to main content"
+- id: nav_main_label
+  translation: "Main navigation"
+- id: nav_toggle
+  translation: "Open or close the menu"
+- id: property_guests
+  translation:
+    one: "{{ .Count }} guest"
+    other: "{{ .Count }} guests"
+- id: property_bedrooms
+  translation:
+    one: "{{ .Count }} bedroom"
+    other: "{{ .Count }} bedrooms"
+- id: property_pmr
+  translation: "Step-free access"
+- id: property_price_note
+  translation: "depending on the season"
+- id: property_cta
+  translation: "Explore the house"
+- id: property_rates
+  translation: "See the rates"
+- id: property_photos
+  translation:
+    one: "{{ .Count }} photo"
+    other: "{{ .Count }} photos"

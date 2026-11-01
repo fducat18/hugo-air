@@ -1,0 +1,26 @@
+- id: skip_to_content
+  translation: "Aller au contenu principal"
+- id: nav_main_label
+  translation: "Navigation principale"
+- id: nav_toggle
+  translation: "Ouvrir ou fermer le menu"
+- id: property_guests
+  translation:
+    one: "{{ .Count }} voyageur"
+    other: "{{ .Count }} voyageurs"
+- id: property_bedrooms
+  translation:
+    one: "{{ .Count }} chambre"
+    other: "{{ .Count }} chambres"
+- id: property_pmr
+  translation: "Accessible PMR"
+- id: property_price_note
+  translation: "selon la saison"
+- id: property_cta
+  translation: "Découvrir la maison"
+- id: property_rates
+  translation: "Voir les tarifs"
+- id: property_photos
+  translation:
+    one: "{{ .Count }} photo"
+    other: "{{ .Count }} photos"
