@@ -162,10 +162,30 @@ p {
   z-index: 1050;
 }
 
+/* Brand and menu share one centred column over the header image */
+.navbar-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding-top: 0.9rem;
+  padding-bottom: 0.4rem;
+}
+
+.navbar-brand {
+  font-size: clamp(1.35rem, 4vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  margin: 0;
+  text-align: center;
+  text-wrap: balance;
+}
+
 .navbar-brand,
 .navbar-nav .nav-link {
   color: #fff !important;
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
   transition: color 0.3s ease, border-top 0.3s ease;
 }
 
@@ -183,20 +203,32 @@ p {
 }
 
 @media (max-width: 991px) {
-  .navbar-collapse {
+  .navbar-toggler {
     position: absolute;
-    top: 100%;
-    right: 0;
-    width: auto;
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    border-radius: 5px;
-    backdrop-filter: blur(3px);
+    right: 0.25rem;
+    top: 0.55rem;
+    padding: 0.5rem 0.6rem;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .navbar-collapse {
+    width: 100%;
+    margin-top: 0.4rem;
+    padding: 0.35rem 0.75rem 0.6rem;
+    background-color: rgba(8, 24, 34, 0.55);
+    border-radius: 0.6rem;
+    backdrop-filter: blur(6px);
   }
 
   .navbar-nav {
-    align-items: flex-end;
-    text-align: right;
+    align-items: center;
+    text-align: center;
+    gap: 0.15rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 0.7rem 0.5rem;
   }
 }
 
@@ -218,25 +250,36 @@ p {
 /* Desktop Styles */
 @media (min-width: 992px) {
   .navbar ul li a {
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    transition: border-top 0.3s ease;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
   }
 
-  /* Apply the white border to both hovered and active menu items */
+  /* Active and hover states read as an underline, not a stray top border */
   .navbar ul li a:hover,
+  .navbar ul li a:focus-visible,
   .navbar ul li a.active {
-    border-top: 5px solid #fff;
-    border-bottom: 5px solid transparent;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.55em;
   }
 }
 
-/* Adjust margin for menu links */
+/* Desktop: menu centred under the brand */
 @media (min-width: 992px) {
+  .navbar-expand-lg .navbar-collapse {
+    flex-grow: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .navbar-expand-lg .navbar-nav {
+    gap: 1.5rem;
+    justify-content: center;
+  }
+
   .navbar-expand-lg .navbar-nav .nav-link {
-    margin-right: 2rem;
+    margin-right: 0;
+    margin-left: 0;
   }
 }
 
@@ -316,36 +359,53 @@ p {
 */
 
 .headerImage {
-  background-size: cover;
-  min-height: 50vh;
-  background-repeat: no-repeat;
-  background-position: center center;
   position: relative;
+  min-height: 50vh;
+  overflow: hidden;
   color: #fff;
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, .2);
+  background-color: #0d2b3a;
   z-index: 1;
 }
 
-.headerImage .loader {
+.header-image {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 3%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .color-overlay {
-  position: absolute;
+  position: relative;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.2);
+  min-height: 50vh;
+  padding: 7rem 1.25rem 3rem;
+  /* Scrim: keeps white navigation legible on pale skies, deepens the caption */
+  background: linear-gradient(180deg,
+      rgba(4, 18, 27, 0.62) 0%,
+      rgba(4, 18, 27, 0.12) 34%,
+      rgba(4, 18, 27, 0.18) 70%,
+      rgba(4, 18, 27, 0.42) 100%);
+}
+
+@media (max-width: 767px) {
+  .headerImage,
+  .color-overlay {
+    min-height: 46vh;
+  }
+
+  .color-overlay {
+    padding: 6rem 1rem 2.25rem;
+  }
 }
 
 .color-overlay h1 {
   background-color: transparent;
   text-align: center;
   color: #fff;
-  text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.75);
+  text-wrap: balance;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
 .color-overlay h2 {
@@ -353,7 +413,8 @@ p {
   text-align: center;
   font-style: italic;
   color: #fff;
-  text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.75);
+  text-wrap: balance;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
 
@@ -464,4 +525,216 @@ p {
 
 footer .nav-link:hover {
   color: #fff;
+}
+
+/*
+=======================================================
+=                 Skip link & focus                   =
+=======================================================
+*/
+
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -140%);
+  z-index: 1100;
+  padding: 0.6rem 1.1rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  background: #fff;
+  color: var(--main-color);
+  font-weight: 600;
+  box-shadow: 0 6px 18px -8px rgba(4, 18, 27, 0.6);
+  transition: transform 0.18s ease-out;
+}
+
+.skip-link:focus {
+  transform: translate(-50%, 0);
+  outline: 3px solid var(--main-color);
+  outline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid #0b6fa4;
+  outline-offset: 2px;
+}
+
+.navbar a:focus-visible,
+.navbar button:focus-visible {
+  outline-color: #fff;
+}
+
+/*
+=======================================================
+=                    Listing cards                    =
+=======================================================
+*/
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin: 2.5rem 0 3.5rem;
+}
+
+@media (min-width: 780px) {
+  .listing-grid {
+    grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+  }
+}
+
+.property-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid rgba(3, 92, 140, 0.14);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(9, 30, 43, 0.06), 0 14px 30px -20px rgba(9, 30, 43, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.property-card:hover,
+.property-card:focus-within {
+  border-color: rgba(3, 92, 140, 0.32);
+  box-shadow: 0 2px 4px rgba(9, 30, 43, 0.07), 0 24px 42px -24px rgba(9, 30, 43, 0.5);
+  transform: translateY(-2px);
+}
+
+.property-media {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #eaf0f4;
+}
+
+.property-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.property-card:hover .property-image,
+.property-card:focus-within .property-image {
+  transform: scale(1.04);
+}
+
+.property-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.35rem 1.45rem 1.5rem;
+}
+
+.property-title {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.property-title a {
+  color: var(--main-color);
+  text-decoration: none;
+}
+
+.property-title a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.property-catchline {
+  margin: 0;
+  text-align: left;
+  font-style: italic;
+  font-size: 1.02rem;
+  color: #4a5a64;
+}
+
+.property-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.property-facts li {
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: #f1f5f8;
+  color: #2f4450;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.property-facts li.property-fact--badge {
+  background: rgba(3, 92, 140, 0.1);
+  color: var(--main-color);
+  font-weight: 600;
+}
+
+.property-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  margin-top: auto;
+  padding-top: 1.1rem;
+}
+
+.property-price {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  text-align: left;
+}
+
+.property-price-value {
+  color: #12303f;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.05rem;
+}
+
+.property-price-note {
+  font-size: 0.78rem;
+  color: #566a76;
+}
+
+.property-cta {
+  padding: 0.62rem 1.15rem;
+  border-radius: 0.4rem;
+  background: var(--main-color);
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.property-cta:hover,
+.property-cta:focus-visible {
+  background: #024a71;
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .property-card,
+  .property-image,
+  .skip-link {
+    transition: none;
+  }
+
+  .property-card:hover,
+  .property-card:focus-within {
+    transform: none;
+  }
+
+  .property-card:hover .property-image,
+  .property-card:focus-within .property-image {
+    transform: none;
+  }
 }

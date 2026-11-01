@@ -7,15 +7,15 @@
   {{ $subdirectory := index $subdirectory 3 }} <!-- Index 3 to get the subdirectory after the domain -->
   {{ $isSubdirectory := ne $subdirectory "" }} <!-- Check if there is a subdirectory -->
 
-  <nav class="navbar navbar-expand-lg ">
-    <div class="container">
+  <nav class="navbar navbar-expand-lg" aria-label="{{ i18n "nav_main_label" }}">
+    <div class="container navbar-stack">
       <a class="navbar-brand main-color" href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="navbarNav" aria-expanded="false" aria-label="{{ i18n "nav_toggle" }}">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
+        <ul class="navbar-nav">
           <!-- Dynamic Menu From config.yml file -->
           {{ range .Site.Menus.main }}
             {{ $currentPage := $.Page.RelPermalink }}
@@ -52,14 +52,15 @@
             {{ $active := cond $isActive "active" "" }}
 
             <li class="nav-item">
-              <a href="{{ .URL }}" class="nav-link {{ $active }}" alt="{{ .URL }}">{{ .Name }}</a>
+              <a href="{{ .URL }}" class="nav-link {{ $active }}"{{ if $isActive }} aria-current="page"{{ end }}>{{ .Name }}</a>
 
               <!-- If there are children, display them as a submenu -->
               {{ if .HasChildren }}
                 <ul class="submenu">
                   {{ range .Children }}
+                    {{ $childActive := eq $.Page.RelPermalink .URL }}
                     <li class="submenu-item">
-                      <a href="{{ .URL }}" class="nav-link {{ cond (eq $.Page.RelPermalink .URL) "active" "" }}">{{ .Name }}</a>
+                      <a href="{{ .URL }}" class="nav-link {{ cond $childActive "active" "" }}"{{ if $childActive }} aria-current="page"{{ end }}>{{ .Name }}</a>
                     </li>
                   {{ end }}
                 </ul>
@@ -72,25 +73,34 @@
     </div>
   </nav>
 
-  <!-- Dynamic Header Image -->
-  {{ with .Resources.Get "featured-image.jpg" }}
-    {{ $largeImage := .Resize "960x webp q75" }}
-    {{ $smallImage := .Resize "480x webp q75" }}
-    <div class="headerImage" small-Image="{{ $smallImage.RelPermalink | relURL }}"
-      large-Image="{{ $largeImage.RelPermalink | relURL }}">
-  {{ else }}
-    <!-- If the featured-image.jpg doesn't exist, use the default static image -->
-    <div class="headerImage" small-Image="{{ "img/header-480.jpg" | relURL }}" large-Image="{{ "img/header-960.jpg" | relURL }}">
-  {{ end }}
-
-  <img src="{{ "img/loader.gif" | relURL }}" alt="{{ .Site.Params.loadingText | default "Loading..." }}" class="loader" />
-
-  <div class="color-overlay d-flex flex-column justify-content-center align-items-center align-content-center">
-    <h1>{{ .Title }}</h1>
-    {{ with .Params.catchline }}
-      <h2>{{ . }}</h2>
+  <!-- Dynamic Header Image: a real <img> so the largest paint is fetchable,
+       responsive and cacheable instead of a background swapped in by JS -->
+  <div class="headerImage">
+    {{ with .Resources.Get "featured-image.jpg" }}
+      {{ $large := .Resize "1600x webp q78" }}
+      {{ $medium := .Resize "1000x webp q78" }}
+      {{ $small := .Resize "600x webp q75" }}
+      <img class="header-image"
+           src="{{ $medium.RelPermalink }}"
+           srcset="{{ $small.RelPermalink }} {{ $small.Width }}w, {{ $medium.RelPermalink }} {{ $medium.Width }}w, {{ $large.RelPermalink }} {{ $large.Width }}w"
+           sizes="100vw"
+           width="{{ $medium.Width }}" height="{{ $medium.Height }}"
+           alt="" fetchpriority="high" decoding="async">
+    {{ else }}
+      <!-- If the featured-image.jpg doesn't exist, use the default static image -->
+      <img class="header-image"
+           src="{{ "img/header-960.jpg" | relURL }}"
+           srcset="{{ "img/header-480.jpg" | relURL }} 480w, {{ "img/header-960.jpg" | relURL }} 960w"
+           sizes="100vw"
+           alt="" fetchpriority="high" decoding="async">
     {{ end }}
+
+    <div class="color-overlay d-flex flex-column justify-content-center align-items-center align-content-center">
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.catchline }}
+        <h2>{{ . }}</h2>
+      {{ end }}
+    </div>
   </div>
 
-</div>
 </header>

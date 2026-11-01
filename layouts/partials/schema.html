@@ -81,6 +81,26 @@
   "knowsLanguage": ["fr-FR", "en-GB"]
 }
 </script>
+{{ else if and .IsSection .Pages }}
+{{/*
+  Section listing: an ItemList is what search and answer engines consume for
+  "which houses are available here". Each child keeps its own full
+  VacationRental graph on its own page.
+*/}}
+{{ $items := slice }}
+{{ range $index, $page := .Pages.ByWeight }}
+  {{ $item := dict "@type" "ListItem" "position" (add $index 1) "url" $page.Permalink "name" $page.Title }}
+  {{ with $page.Resources.GetMatch "featured-image*" }}
+    {{ $item = merge $item (dict "image" .Permalink) }}
+  {{ end }}
+  {{ with $page.Description }}
+    {{ $item = merge $item (dict "description" .) }}
+  {{ end }}
+  {{ $items = $items | append $item }}
+{{ end }}
+<script type="application/ld+json">
+{{ dict "@context" "https://schema.org" "@type" "ItemList" "name" .Title "url" .Permalink "numberOfItems" (len $items) "itemListElement" $items | jsonify | safeJS }}
+</script>
 {{ else if .Site.Params.schema }}
 <script type="application/ld+json">
 {
