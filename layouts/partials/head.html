@@ -1,7 +1,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if .IsHome }}{{ .Site.Title }}{{ with .Site.Params.titleSuffix }}{{ . }}{{ end }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+  <title>{{ if .IsHome }}{{ .Site.Title }}{{ with .Site.Params.titleSuffix }}{{ . }}{{ end }}{{ else if eq .Kind "404" }}{{ i18n "notfound_title" | default "Page not found" }} | {{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
   {{/* Description: front-matter wins, else a cleaned + truncated summary.
        Raw markdown markers must never leak into the meta tag. */}}
   {{ $desc := "" }}
