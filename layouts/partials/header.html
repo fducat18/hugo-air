@@ -101,7 +101,9 @@
     {{ end }}
 
     <div class="color-overlay d-flex flex-column justify-content-center align-items-center align-content-center">
-      <h1>{{ .Title }}</h1>
+      {{/* Hugo titles the 404 page "404 Page not found" (english); keep one
+           localised heading instead of a second, contradictory one. */}}
+      <h1>{{ if eq .Kind "404" }}{{ i18n "notfound_title" | default "Page not found" }}{{ else }}{{ .Title }}{{ end }}</h1>
       {{ with .Params.catchline }}
         <h2>{{ . }}</h2>
       {{ end }}
