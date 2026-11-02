@@ -173,32 +173,6 @@ p {
 }
 
 /* Desktop: brand and menu sit on a single centred line */
-@media (min-width: 992px) {
-  .navbar-stack {
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    padding-bottom: 0.6rem;
-  }
-
-  .navbar-stack > .navbar-collapse {
-    flex-grow: 0;
-    flex-basis: auto;
-  }
-
-  .navbar-brand {
-    font-size: clamp(1.05rem, 2.1vw, 1.35rem);
-    white-space: nowrap;
-  }
-
-  .navbar-nav {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.3rem;
-  }
-}
-
 .navbar-brand {
   font-size: clamp(1.35rem, 4vw, 1.85rem);
   font-weight: 600;
@@ -222,6 +196,43 @@ p {
 .navbar-nav .nav-link.active {
   color: rgba(255, 255, 255, 1) !important;
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Desktop: brand and menu on a single centred line. Declared after the base
+   .navbar-brand rule on purpose: at equal specificity the later rule wins, and
+   text-wrap/white-space must override the base `text-wrap: balance`. */
+@media (min-width: 992px) {
+  .navbar-stack {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .navbar-stack > .navbar-collapse {
+    flex-grow: 0;
+    flex-basis: auto;
+  }
+
+  .navbar-brand {
+    flex: 0 0 auto;
+    font-size: clamp(1rem, 1.8vw, 1.3rem);
+    line-height: 1.1;
+    text-align: left;
+    white-space: nowrap;
+    text-wrap: nowrap;
+  }
+
+  .navbar-nav {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .navbar-nav .nav-link {
+    white-space: nowrap;
+  }
 }
 
 /* Ensure the navbar toggler is visible on mobile */
