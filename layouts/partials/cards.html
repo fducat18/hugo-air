@@ -1,45 +1,98 @@
-<div class="row mt-3 d-flex justify-content-center">
+{{/*
+  Card grid for section listings (houses, features, photo sets).
 
-  {{ range .Pages }}
-  
+  Every value comes from the page itself: bundle images, title, catchline and
+  the optional `params.schema` block (maxGuests, numberOfRooms, priceRange,
+  pmr). Anything missing is simply not rendered, so a plain page still gets a
+  clean card.
+*/}}
+{{ $pages := .Pages.ByWeight }}
+{{ $eager := true }}
 
-  <div class="col-6 col-md-4 col-lg-3 
-                  text-center 
-                  d-flex 
-                  justify-content-center
-                  mb-3">
+<div class="listing-grid">
 
-    <div class="card h-100 w-100">
+  {{ range $pages }}
 
-      <a href="{{ .RelPermalink }}">
-        {{ with .Resources.Get "featured-image.jpg" | or (.Resources.Get "card.jpg") }}
-        {{ $image := .Resize "400x"}}
-        <div class="image-zoom-wrapper-top">
-          <img src="{{ $image.RelPermalink }}" class="card-img-top zoom-image-top" alt="{{ .Title }}">
-        </div>
-        {{ else }}
-        <div class="image-zoom-wrapper-top">
-          <img src="{{ "img/card.jpg" | relURL }}" class="card-img-top zoom-image-top" alt="{{ .Title }}">
-        </div>
+  {{ $page := . }}
+  {{ $schema := .Params.schema }}
+
+  <article class="property-card">
+
+    <a class="property-media" href="{{ .RelPermalink }}" tabindex="-1">
+      {{ with .Resources.Get "featured-image.jpg" | or (.Resources.Get "card.jpg") }}
+        {{ $large := .Resize "1200x webp q80" }}
+        {{ $medium := .Resize "800x webp q80" }}
+        {{ $small := .Resize "480x webp q78" }}
+        <img class="property-image"
+             src="{{ $medium.RelPermalink }}"
+             srcset="{{ $small.RelPermalink }} {{ $small.Width }}w, {{ $medium.RelPermalink }} {{ $medium.Width }}w, {{ $large.RelPermalink }} {{ $large.Width }}w"
+             sizes="(min-width: 1024px) 460px, (min-width: 780px) 46vw, 92vw"
+             width="{{ $medium.Width }}" height="{{ $medium.Height }}"
+             alt="{{ with $page.Params.image_alt }}{{ . }}{{ else }}{{ $page.Title }}{{ end }}"
+             loading="{{ if $eager }}eager{{ else }}lazy{{ end }}"
+             fetchpriority="{{ if $eager }}high{{ else }}auto{{ end }}"
+             decoding="async">
+      {{ else }}
+        <img class="property-image"
+             src="{{ "img/card.jpg" | relURL }}"
+             alt="{{ $page.Title }}"
+             loading="{{ if $eager }}eager{{ else }}lazy{{ end }}"
+             decoding="async">
+      {{ end }}
+    </a>
+
+    <div class="property-body">
+
+      <h2 class="property-title">
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      </h2>
+
+      {{ with .Params.catchline }}
+      <p class="property-catchline">{{ . }}</p>
+      {{ end }}
+
+      {{ $facts := slice }}
+      {{ with $schema.maxGuests }}
+        {{ $facts = $facts | append (i18n "property_guests" (dict "Count" .)) }}
+      {{ end }}
+      {{ with $schema.numberOfRooms }}
+        {{ $facts = $facts | append (i18n "property_bedrooms" (dict "Count" .)) }}
+      {{ end }}
+
+      {{ if or $facts .Params.pmr }}
+      <ul class="property-facts">
+        {{ range $facts }}
+        <li>{{ . }}</li>
         {{ end }}
-      </a>
-      <div class="card-body d-flex flex-column justify-content-between">
-        <a href="{{ .RelPermalink }}">
-          <h5 class="card-title main-color">{{ .Title }}</h5>
-        </a>
-        <p class="card-text catchline">{{ .Params.catchline }}</p>
-        <a href="{{ .RelPermalink }}" class="btn main-color ">
-          {{ with .Params.button }}
-          {{ . }}
+        {{ if .Params.pmr }}
+        <li class="property-fact--badge">{{ i18n "property_pmr" }}</li>
+        {{ end }}
+      </ul>
+      {{ end }}
+
+      <div class="property-actions">
+        {{ with $schema.priceRange }}
+        {{ $prices := findRE "[0-9]+" . }}
+        <p class="property-price">
+          {{ if eq (len $prices) 2 }}
+          <span class="property-price-value">{{ index $prices 0 }}&nbsp;€ – {{ index $prices 1 }}&nbsp;€</span>
           {{ else }}
-          {{ .Title }}
-          {{ end }}</a>
+          <span class="property-price-value">{{ delimit $prices " – " }}&nbsp;€</span>
+          {{ end }}
+          <span class="property-price-note">{{ i18n "property_price_note" }}</span>
+        </p>
+        {{ end }}
+
+        <a class="btn property-cta" href="{{ .RelPermalink }}">
+          {{ with .Params.button }}{{ . }}{{ else }}{{ i18n "property_cta" }}{{ end }}
+        </a>
       </div>
 
     </div>
-  </div>
 
+  </article>
 
+  {{ $eager = false }}
   {{ end }}
 
 </div>

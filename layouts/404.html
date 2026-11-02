@@ -1,0 +1,10 @@
+{{ define "main" }}
+<main class="container py-5" id="main-content">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 text-center">
+      <p class="lead">{{ i18n "notfound_text" | default "This page does not exist (or no longer does)." }}</p>
+      <a class="btn main-color" href="{{ .Site.Home.RelPermalink }}">{{ i18n "notfound_home" | default "Back to home" }}</a>
+    </div>
+  </div>
+</main>
+{{ end }}

@@ -1,7 +1,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if .IsHome }}{{ .Site.Title }}{{ with .Site.Params.titleSuffix }}{{ . }}{{ end }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+  <title>{{ if .IsHome }}{{ .Site.Title }}{{ with .Site.Params.titleSuffix }}{{ . }}{{ end }}{{ else if eq .Kind "404" }}{{ i18n "notfound_title" | default "Page not found" }} | {{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
   {{/* Description: front-matter wins, else a cleaned + truncated summary.
        Raw markdown markers must never leak into the meta tag. */}}
   {{ $desc := "" }}
@@ -57,6 +57,15 @@
 
   <!-- JSON-LD -->
   {{ partial "schema.html" . }}
+
+  <!-- Header image placeholder: a 32px blur of the page's own featured image,
+       inlined as a data URI (~380 bytes, no extra request before first paint).
+       header.html only adds the .has-lqip class; the opaque <img> covers this
+       as soon as it paints. -->
+  {{ with .Resources.Get "featured-image.jpg" }}
+    {{ $blur := .Resize "32x q30 webp" }}
+    <style>.headerImage.has-lqip{background-image:url(data:image/webp;base64,{{ $blur.Content | base64Encode }});background-size:cover;background-position:center}</style>
+  {{ end }}
 
   <!-- Favicon -->
   <link rel="icon" href="{{ "favicon.ico" | relURL }}" type="image/x-icon">
