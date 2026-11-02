@@ -15,7 +15,7 @@
 - id: property_pmr
   translation: "Accessible PMR"
 - id: property_price_note
-  translation: "selon la saison"
+  translation: "par nuit, selon la saison"
 - id: property_cta
   translation: "Découvrir la maison"
 - id: property_rates
