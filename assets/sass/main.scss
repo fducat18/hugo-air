@@ -172,6 +172,33 @@ p {
   padding-bottom: 0.4rem;
 }
 
+/* Desktop: brand and menu sit on a single centred line */
+@media (min-width: 992px) {
+  .navbar-stack {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .navbar-stack > .navbar-collapse {
+    flex-grow: 0;
+    flex-basis: auto;
+  }
+
+  .navbar-brand {
+    font-size: clamp(1.05rem, 2.1vw, 1.35rem);
+    white-space: nowrap;
+  }
+
+  .navbar-nav {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+  }
+}
+
 .navbar-brand {
   font-size: clamp(1.35rem, 4vw, 1.85rem);
   font-weight: 600;
