@@ -24,3 +24,9 @@
   translation:
     one: "{{ .Count }} photo"
     other: "{{ .Count }} photos"
+- id: notfound_title
+  translation: "Page introuvable"
+- id: notfound_text
+  translation: "Cette page n'existe pas ou n'existe plus."
+- id: notfound_home
+  translation: "Retour à l'accueil"
