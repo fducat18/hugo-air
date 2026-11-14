@@ -1,0 +1,17 @@
+{{- /*
+  Gallery images for a page bundle.
+
+  `featured-image.*` is the page header and `card.*` is the Bootstrap card
+  thumbnail: both are page furniture, so they never belong in a gallery.
+  Every other image resource of the bundle is returned, in bundle order.
+
+  Call with the page as context: {{ $images := partial "gallery-images.html" . }}
+*/ -}}
+{{- $images := slice -}}
+{{- range .Resources.ByType "image" -}}
+  {{- $stem := .Name | replaceRE `\.[^.]+$` "" -}}
+  {{- if not (in (slice "featured-image" "card") $stem) -}}
+    {{- $images = $images | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- return $images -}}

@@ -1,8 +1,8 @@
 <div class="row">
   {{ $page := .Get "page" }}
   {{ $pageObject := .Site.GetPage (printf "%s/%s" .Page.Section $page) }}
-  {{ with $pageObject.Resources }}
-  {{ $images := .ByType "image" }}
+  {{ with $pageObject }}
+  {{ $images := partial "gallery-images.html" . }}
   {{ range $image := $images }}
 
   {{- $image = partial "oriented-image.html" $image -}}

@@ -1,5 +1,5 @@
 <div class="row" data-masonry='{"percentPosition": true}'>
-  {{ $images := .Resources.ByType "image" }}
+  {{ $images := partial "gallery-images.html" . }}
   {{ range $images }}
 
   {{- $oriented := partial "oriented-image.html" . }}

@@ -3,7 +3,7 @@
   {{ $pageObject := .Site.GetPage (printf "%s/%s" .Page.Section $page) }}
   {{ with $pageObject }}
 
-    {{ $images := .Resources.ByType "image" }}
+    {{ $images := partial "gallery-images.html" . }}
     {{ range $images }}
 
     {{- $oriented := partial "oriented-image.html" . }}
