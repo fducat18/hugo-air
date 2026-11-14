@@ -352,11 +352,11 @@ content/
 └── pages/
     └── my-page/                # Page Bundle
         ├── index.md            # Page content
-        ├── featured-image.jpg  # Image Resource used as gallery image 1
-        ├── card.jpg            # Image Resource used as gallery image 2 AND as card featured image
-        ├── photo1.jpg          # Image Resource used as gallery image 3
-        ├── photo2.jpg          # Image Resource used as gallery image 4
-        └── photo3.jpg          # Image Resource used as gallery image 5
+        ├── featured-image.jpg  # Page header — never part of the gallery
+        ├── card.jpg            # Card thumbnail — never part of the gallery
+        ├── photo1.jpg          # Gallery image 1
+        ├── photo2.jpg          # Gallery image 2
+        └── photo3.jpg          # Gallery image 3
 ```
 
 In your `.md` file, add this block to display your instagram image gallery
@@ -381,6 +381,12 @@ Automatically loaded as a header image on your page
 Automatically loaded from the `static/img` folder.
 - `header-960.jpg` for screens higher than 960px
 - `header-480.jpg` for screens lower than 960px
+
+The bundled default is "Enigmatic foggy forest landscape at dawn" by
+[Pexels](https://www.pexels.com/photo/enigmatic-foggy-forest-landscape-at-dawn-35664581/)
+(Pexels license: free for any use, no attribution required). Replace both files
+with your own photo of the same 3:2 ratio, or drop a `featured-image.jpg` in a
+page bundle to override it per page.
 
 ### Custom Bootstrap Card image
 

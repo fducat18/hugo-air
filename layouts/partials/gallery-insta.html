@@ -1,5 +1,5 @@
 <div class="row">
-  {{- $images := .Resources.ByType "image" -}}
+  {{- $images := partial "gallery-images.html" . -}}
   {{ range $image := $images }}
 
   {{- $image = partial "oriented-image.html" $image -}}
