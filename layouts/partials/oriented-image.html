@@ -1,0 +1,17 @@
+{{/* Rotates the image per its Exif orientation tag (1 = upright, 6/8 = pixels
+     stored sideways), because Hugo drops the Exif block on re-encode and the
+     browser then has nothing left to compensate with. Upright images are
+     returned untouched, so they keep their original bytes.
+     Usage: {{ $img := partial "oriented-image.html" . }} */}}
+{{ $src := . }}
+{{ $out := $src }}
+{{ if eq $src.MediaType.SubType "jpeg" }}
+  {{ with $src.Exif }}
+    {{ with .Tags.Orientation }}
+      {{ if ne (int .) 1 }}
+        {{ $out = $src.Filter (images.AutoOrient) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ return $out }}
