@@ -31,7 +31,8 @@ Just visit [fducat18.github.io/hugo-air-demo](https://fducat18.github.io/hugo-ai
 | ✨ **Single-page** landing homepage   	                                         |
 | ✨ Embedded OpenStreetMap & Google Maps                                         |
 | ✨ Smooobu Booking **shortcode**      	                                         |
-| ✨ **Multilingual** Support shortcode      	                                   |
+| ✨ **Multilingual** Support shortcode     	                                   |
+| ✨ **Structured data** JSON-LD (VacationRental, ItemList, FAQPage, WebPage)     |
 
 ## Installation
 
@@ -246,9 +247,92 @@ services:
   id: G-12345  #Replace with your Google Analytics ID
 ```
 
+### Structured data (JSON-LD)
+
+Every page ships one JSON-LD graph, chosen in this order:
+
+| Page | Graph |
+|---|---|
+| front matter declares `params.schema` | one graph for that page (see below) |
+| section landing page with child pages | `ItemList` of the children |
+| home page | `WebSite` |
+| any other page | `WebPage` + `isPartOf` the site |
+| `404.html` | nothing — a 404 must not describe anything |
+
+Business properties (`address`, `priceRange`, `openingHoursSpecification`) are **not** spread over the whole site any more: they belong to the page that actually describes a business or a property, otherwise every URL claims to be the same business.
+
+#### `VacationRental`
+
+A holiday-rental page declares its own graph in the front matter:
+
+```yaml
+params:
+  schema:
+    type: VacationRental
+    identifier: "yeu-genets"        # stable, identical in every translation
+    additionalType: "House"          # Apartment, Bungalow, Cabin, Chalet, Cottage,
+                                     # Gite, HolidayVillageRental, House, Villa
+    accommodationType: "EntirePlace" # else PrivateRoom / SharedRoom
+    address:
+      street: "13 Chemin de la Détourne"
+      locality: "L'Île-d'Yeu"
+      region: "Pays de la Loire"
+      postalCode: "85350"
+      country: "FR"
+    geo:
+      latitude: 46.713611            # 5 decimals minimum
+      longitude: -2.367975
+    floorSize:
+      value: 250
+      unitCode: MTK                  # MTK/SQM square metres, FTK/SQFT square feet
+    priceRange: "260-490 EUR"
+    occupancy:
+      max: 8                         # becomes containsPlace.occupancy.value
+    numberOfRooms: 4
+    numberOfBedrooms: 4
+    numberOfBathroomsTotal: 4
+    checkinTime: "16:00"
+    checkoutTime: "10:00"
+    amenities:                       # English names only, see the list below
+      - name: wifi
+      - name: kitchen
+      - name: fireplace
+      - name: patio
+    sameAs:
+      - "https://www.airbnb.fr/rooms/1234"
+```
+
+| What | Where it lands |
+|---|---|
+| `occupancy`, `numberOf*`, `floorSize`, `amenities` | `containsPlace` (`Accommodation`), as Google requires |
+| the page-bundle gallery (card and `featured-image` excluded) | `image` — at least 8 photos are needed, one bedroom, one bathroom and one common area |
+| `params.schema.images` | `image`, when you want an explicit list instead of the gallery |
+| `identifier`, if omitted | the translation key, which survives a retitled page |
+| `review[]` / `aggregateRating` | printed only when you really have collected reviews |
+
+`amenities[].name` must be one of Google's English values: `ac`, `airportShuttle`, `balcony`, `beachAccess`, `childFriendly`, `crib`, `elevator`, `fireplace`, `freeBreakfast`, `gymFitnessEquipment`, `heating`, `hotTub`, `instantBookable`, `ironingBoard`, `kitchen`, `microwave`, `outdoorGrill`, `ovenStove`, `patio`, `petsAllowed`, `pool`, `privateBeachAccess`, `selfCheckinCheckout`, `smokingAllowed`, `tv`, `washerDryer`, `wheelchairAccessible`, `wifi`. A French label is ignored by Google: keep the labels in the page body.
+
+#### Reviews
+
+```yaml
+    review:
+      - author: "Camille"
+        datePublished: "2026-08-11"
+        text: "Maison impeccable, très calme."
+        rating:
+          value: 5
+          best: 5
+    aggregateRating:
+      value: 4.9
+      count: 12
+```
+
+Do not publish a rating you have not collected: fabricated reviews break Google's guidelines and put the whole markup at risk.
+
 ### Image Gallery
 
 #### Use as partial
+
 In your `.md` file, specify the type of the page with `type: gallery-masonry` or  `type: gallery-insta` like this:
 
 ```yaml

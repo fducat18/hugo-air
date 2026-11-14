@@ -1,156 +1,268 @@
-{{ if .Params.schema }}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "{{ .Params.schema.type | default "VacationRental" }}",
-  "name": "{{ .Title }}",
-  "image": [
-    {{ range $index, $element := .Params.schema.images }}
-      {{ if $index }},{{ end }}"{{ $element | absURL }}"
-    {{ end }}
-    {{ if not .Params.schema.images }}
-      "{{ .Params.featured_image | default "featured-image.jpg" | absURL }}"
-    {{ end }}
-  ],
-  "description": "{{ .Params.description | default .Description }}",
-  "url": "{{ .Permalink }}",
-  {{ with .Params.schema.identifier }}"identifier": "{{ . }}",{{ end }}
-  {{ with .Params.schema.address }}
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "{{ .street }}",
-    "addressLocality": "{{ .locality }}",
-    "postalCode": "{{ .postalCode }}",
-    "addressCountry": "{{ .country }}"
-  },
-  {{ end }}
-  {{ with .Params.schema.geo }}
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": {{ .latitude }},
-    "longitude": {{ .longitude }}
-  },
-  {{ end }}
-  {{ with .Params.schema.priceRange }}"priceRange": "{{ . }}",{{ end }}
-  {{ with .Params.schema.checkinTime }}"checkinTime": "{{ . }}",{{ end }}
-  {{ with .Params.schema.checkoutTime }}"checkoutTime": "{{ . }}",{{ end }}
-  {{ with .Params.schema.occupancy }}
-  "occupancy": {
-    "@type": "QuantitativeValue",
-    "minValue": {{ .min | default 1 }},
-    "maxValue": {{ .max }}
-  },
-  {{ end }}
-  {{ with .Params.schema.numberOfRooms }}"numberOfRooms": {{ . }},{{ end }}
-  {{ with .Params.schema.amenities }}
-  "amenityFeature": [
-    {{ range $index, $element := . }}
-      {{ if $index }},{{ end }}
-      {
-        "@type": "LocationFeatureSpecification",
-        "name": "{{ $element.name }}",
-        "value": {{ $element.value | default true }}
-      }
-    {{ end }}
-  ],
-  {{ end }}
-  {{ if .Params.schema.sameAs }}
-  "sameAs": [
-    {{ range $index, $element := .Params.schema.sameAs }}
-      {{ if $index }},{{ end }}"{{ $element }}"
-    {{ end }}
-  ],
-  {{ end }}
-  {{ with .Params.schema.faq }}
-  {{/* FAQPage rich results require mainEntity; only list Q/A that are also
-       visible in the page body (Google requirement). */}}
-  "mainEntity": [
-    {{ range $index, $qa := . }}
-    {{ if $index }},{{ end }}
-    {
-      "@type": "Question",
-      "name": {{ $qa.question | jsonify | safeJS }},
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": {{ $qa.answer | jsonify | safeJS }}
-      }
-    }
-    {{ end }}
-  ],
-  {{ end }}
-  "knowsLanguage": ["fr-FR", "en-GB"]
-}
-</script>
-{{ else if and .IsSection .Pages }}
-{{/*
-  Section listing: an ItemList is what search and answer engines consume for
-  "which houses are available here". Each child keeps its own full
-  VacationRental graph on its own page.
-*/}}
-{{ $items := slice }}
-{{ range $index, $page := .Pages.ByWeight }}
-  {{ $item := dict "@type" "ListItem" "position" (add $index 1) "url" $page.Permalink "name" $page.Title }}
-  {{ with $page.Resources.GetMatch "featured-image*" }}
-    {{ $item = merge $item (dict "image" .Permalink) }}
-  {{ end }}
-  {{ with $page.Description }}
-    {{ $item = merge $item (dict "description" .) }}
-  {{ end }}
-  {{ $items = $items | append $item }}
-{{ end }}
-<script type="application/ld+json">
-{{ dict "@context" "https://schema.org" "@type" "ItemList" "name" .Title "url" .Permalink "numberOfItems" (len $items) "itemListElement" $items | jsonify | safeJS }}
-</script>
-{{ else if .Site.Params.schema }}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "{{ .Site.Params.schema.type | default "Website" }}",
-  "name": "{{ .Site.Title }}",
-  "image": "{{ "featured-image.jpg" | absURL }}",
-  "url": "{{ .Site.BaseURL }}",
-  {{ with .Site.Params.telephone }}"telephone": "{{ . }}",{{ end }}
-  {{ $mapUrl := or .Site.Params.osm_url .Site.Params.gmaps_url }}
-  {{ if and (not $mapUrl) .Site.Params.osm_markers }}
-    {{ with index .Site.Params.osm_markers 0 }}
-      {{ $lat := .lat }}
-      {{ $lon := or .lon .lng }}
-      {{ $mapUrl = printf "https://www.openstreetmap.org/?mlat=%v&mlon=%v#map=16/%v/%v" $lat $lon $lat $lon }}
-    {{ end }}
-  {{ end }}
-  {{ with $mapUrl }}"hasMap": "{{ . }}",{{ end }}
-  {{ with .Site.Params.schema.address }}
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "{{ .street }}",
-    "addressLocality": "{{ .locality }}",
-    "postalCode": "{{ .postalCode }}",
-    "addressCountry": "{{ .country }}"
-  },
-  {{ end }}
-  {{ with .Site.Params.schema.geo }}
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": {{ .latitude }},
-    "longitude": {{ .longitude }}
-  },
-  {{ end }}
-  "description": "{{ .Site.Params.description }}",
-  "priceRange": "{{ .Site.Params.schema.priceRange | default "€" }}",
-  "openingHoursSpecification": {
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday"
-    ],
-    "opens": "00:00",
-    "closes": "23:59"
-  }
-}
-</script>
-{{ end }}
+{{- /*
+  Structured data (JSON-LD).
+
+  Three shapes, in order of precedence:
+    1. the page front matter declares `params.schema` -> one graph for that page
+    2. a section landing page that has child pages     -> ItemList of the children
+    3. anything else                                  -> WebSite on the home page,
+                                                         WebPage + isPartOf elsewhere
+
+  No graph is emitted on the 404 page: nothing there deserves to be described.
+
+  The graphs are assembled with `dict`/`merge` and printed with `jsonify`, so an
+  optional property is either present or absent — never a dangling comma or an
+  empty string. Property names follow Google's structured data documentation:
+  https://developers.google.com/search/docs/appearance/structured-data/vacation-rental
+*/ -}}
+{{- $website := dict "@type" "WebSite" "name" .Site.Title "url" .Site.BaseURL -}}
+
+{{- if .Params.schema -}}
+  {{- $s := .Params.schema -}}
+  {{- $type := $s.type | default "VacationRental" -}}
+
+  {{- /* Images: explicit list, else the page-bundle gallery, else the featured image.
+         Google wants at least 8 photos on a vacation rental listing, including a
+         bedroom, a bathroom and a common area — which is exactly what a gallery
+         holds, so the whole gallery is declared (card and featured thumbnails aside). */ -}}
+  {{- $images := slice -}}
+  {{- with $s.images -}}
+    {{- range . -}}
+      {{- $images = $images | append (. | absURL) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if not $images -}}
+    {{- range .Resources.ByType "image" -}}
+      {{- if and (not (hasPrefix .Name "card")) (ne .Name "featured-image.jpg") -}}
+        {{- $images = $images | append .Permalink -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if not $images -}}
+    {{- with .Params.featured_image -}}
+      {{- $images = slice (. | absURL) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $graph := dict "@context" "https://schema.org" "@type" $type "name" .Title "url" .Permalink -}}
+  {{- with $images -}}
+    {{- $graph = merge $graph (dict "image" .) -}}
+  {{- end -}}
+  {{- with (or $s.description .Params.description .Description) -}}
+    {{- $graph = merge $graph (dict "description" .) -}}
+  {{- end -}}
+  {{- with .Language -}}
+    {{- $graph = merge $graph (dict "inLanguage" .Lang) -}}
+  {{- end -}}
+
+  {{- if eq $type "VacationRental" -}}
+    {{- /* `identifier` must be stable and language independent: keep the same value
+           in every translation of the listing. Fallback: the translation key, which
+           survives a retitled page. */ -}}
+    {{- with (or $s.identifier .TranslationKey) -}}
+      {{- $graph = merge $graph (dict "identifier" .) -}}
+    {{- end -}}
+    {{- with $s.additionalType -}}
+      {{- $graph = merge $graph (dict "additionalType" .) -}}
+    {{- end -}}
+    {{- with $s.priceRange -}}
+      {{- $graph = merge $graph (dict "priceRange" .) -}}
+    {{- end -}}
+    {{- with $s.checkinTime -}}
+      {{- $graph = merge $graph (dict "checkinTime" .) -}}
+    {{- end -}}
+    {{- with $s.checkoutTime -}}
+      {{- $graph = merge $graph (dict "checkoutTime" .) -}}
+    {{- end -}}
+
+    {{- $address := dict "@type" "PostalAddress" -}}
+    {{- with $s.address -}}
+      {{- with .street -}}
+        {{- $address = merge $address (dict "streetAddress" .) -}}
+      {{- end -}}
+      {{- with .locality -}}
+        {{- $address = merge $address (dict "addressLocality" .) -}}
+      {{- end -}}
+      {{- with .region -}}
+        {{- $address = merge $address (dict "addressRegion" .) -}}
+      {{- end -}}
+      {{- with .postalCode -}}
+        {{- $address = merge $address (dict "postalCode" .) -}}
+      {{- end -}}
+      {{- with .country -}}
+        {{- $address = merge $address (dict "addressCountry" .) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if gt (len $address) 1 -}}
+      {{- $graph = merge $graph (dict "address" $address) -}}
+    {{- end -}}
+
+    {{- $geo := dict "@type" "GeoCoordinates" -}}
+    {{- with $s.geo -}}
+      {{- with .latitude -}}
+        {{- $geo = merge $geo (dict "latitude" .) -}}
+      {{- end -}}
+      {{- with .longitude -}}
+        {{- $geo = merge $geo (dict "longitude" .) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if gt (len $geo) 1 -}}
+      {{- $graph = merge $graph (dict "geo" $geo) -}}
+    {{- end -}}
+
+    {{- /* The rental itself is a place containing one Accommodation: guest capacity,
+           rooms, amenities and size live there, not on the listing. */ -}}
+    {{- $accommodation := dict "@type" "Accommodation" "additionalType" ($s.accommodationType | default "EntirePlace") -}}
+    {{- with $s.occupancy -}}
+      {{- with (or .max .value .guests) -}}
+        {{- $accommodation = merge $accommodation (dict "occupancy" (dict "@type" "QuantitativeValue" "value" .)) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- with $s.numberOfRooms -}}
+      {{- $accommodation = merge $accommodation (dict "numberOfRooms" .) -}}
+    {{- end -}}
+    {{- with $s.numberOfBedrooms -}}
+      {{- $accommodation = merge $accommodation (dict "numberOfBedrooms" .) -}}
+    {{- end -}}
+    {{- with $s.numberOfBathroomsTotal -}}
+      {{- $accommodation = merge $accommodation (dict "numberOfBathroomsTotal" .) -}}
+    {{- end -}}
+    {{- with $s.floorSize -}}
+      {{- $size := dict "@type" "QuantitativeValue" -}}
+      {{- with .value -}}
+        {{- $size = merge $size (dict "value" .) -}}
+      {{- end -}}
+      {{- with .unitCode -}}
+        {{- $size = merge $size (dict "unitCode" .) -}}
+      {{- end -}}
+      {{- $accommodation = merge $accommodation (dict "floorSize" $size) -}}
+    {{- end -}}
+    {{- with $s.bed -}}
+      {{- $beds := slice -}}
+      {{- range . -}}
+        {{- $beds = $beds | append (dict "@type" "BedDetails" "numberOfBeds" .numberOfBeds "typeOfBed" .typeOfBed) -}}
+      {{- end -}}
+      {{- $accommodation = merge $accommodation (dict "bed" $beds) -}}
+    {{- end -}}
+    {{- with $s.amenities -}}
+      {{- /* Boolean amenity names must be one of Google's English values
+             (wifi, kitchen, fireplace, patio, wheelchairAccessible, ...). */ -}}
+      {{- $features := slice -}}
+      {{- range . -}}
+        {{- $features = $features | append (dict "@type" "LocationFeatureSpecification" "name" .name "value" (.value | default true)) -}}
+      {{- end -}}
+      {{- $accommodation = merge $accommodation (dict "amenityFeature" $features) -}}
+    {{- end -}}
+    {{- $graph = merge $graph (dict "containsPlace" $accommodation) -}}
+
+    {{- with $s.sameAs -}}
+      {{- $graph = merge $graph (dict "sameAs" .) -}}
+    {{- end -}}
+    {{- $languages := $s.knowsLanguage -}}
+    {{- if not $languages -}}
+      {{- $languages = slice -}}
+      {{- range .Site.Languages -}}
+        {{- $languages = $languages | append .Lang -}}
+      {{- end -}}
+    {{- end -}}
+    {{- with $languages -}}
+      {{- $graph = merge $graph (dict "knowsLanguage" .) -}}
+    {{- end -}}
+
+    {{- /* Reviews are printed only when the page really carries them: inventing a
+           rating is both dishonest and against Google's guidelines. */ -}}
+    {{- with $s.review -}}
+      {{- $reviews := slice -}}
+      {{- range . -}}
+        {{- $review := dict "@type" "Review" -}}
+        {{- with .author -}}
+          {{- $review = merge $review (dict "author" (dict "@type" "Person" "name" .)) -}}
+        {{- end -}}
+        {{- with .datePublished -}}
+          {{- $review = merge $review (dict "datePublished" .) -}}
+        {{- end -}}
+        {{- with .contentReferenceTime -}}
+          {{- $review = merge $review (dict "contentReferenceTime" .) -}}
+        {{- end -}}
+        {{- with .text -}}
+          {{- $review = merge $review (dict "reviewBody" .) -}}
+        {{- end -}}
+        {{- with .rating -}}
+          {{- $rating := dict "@type" "Rating" "bestRating" (.best | default 5) -}}
+          {{- with .value -}}
+            {{- $rating = merge $rating (dict "ratingValue" .) -}}
+          {{- end -}}
+          {{- $review = merge $review (dict "reviewRating" $rating) -}}
+        {{- end -}}
+        {{- $reviews = $reviews | append $review -}}
+      {{- end -}}
+      {{- $graph = merge $graph (dict "review" $reviews) -}}
+    {{- end -}}
+    {{- with $s.aggregateRating -}}
+      {{- $rating := dict "@type" "AggregateRating" "bestRating" (.best | default 5) -}}
+      {{- with .value -}}
+        {{- $rating = merge $rating (dict "ratingValue" .) -}}
+      {{- end -}}
+      {{- with .count -}}
+        {{- $rating = merge $rating (dict "ratingCount" .) -}}
+      {{- end -}}
+      {{- with .reviewCount -}}
+        {{- $rating = merge $rating (dict "reviewCount" .) -}}
+      {{- end -}}
+      {{- $graph = merge $graph (dict "aggregateRating" $rating) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* FAQPage rich results require mainEntity; only list Q/A that are also
+         visible in the page body (Google requirement). */ -}}
+  {{- with $s.faq -}}
+    {{- $questions := slice -}}
+    {{- range . -}}
+      {{- $questions = $questions | append (dict "@type" "Question" "name" .question "acceptedAnswer" (dict "@type" "Answer" "text" .answer)) -}}
+    {{- end -}}
+    {{- $graph = merge $graph (dict "mainEntity" $questions) -}}
+  {{- end -}}
+  <script type="application/ld+json">{{ $graph | jsonify | safeJS }}</script>
+{{- else if and .IsSection .Pages -}}
+  {{- /*
+    Section listing: an ItemList is what search and answer engines consume for
+    "which houses are available here". Each child keeps its own full
+    VacationRental graph on its own page.
+  */ -}}
+  {{- $items := slice -}}
+  {{- range $index, $page := .Pages.ByWeight -}}
+    {{- $item := dict "@type" "ListItem" "position" (add $index 1) "url" $page.Permalink "name" $page.Title -}}
+    {{- with $page.Resources.GetMatch "featured-image*" -}}
+      {{- $item = merge $item (dict "image" .Permalink) -}}
+    {{- end -}}
+    {{- with $page.Description -}}
+      {{- $item = merge $item (dict "description" .) -}}
+    {{- end -}}
+    {{- $items = $items | append $item -}}
+  {{- end -}}
+  <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@type" "ItemList" "name" .Title "url" .Permalink "numberOfItems" (len $items) "itemListElement" $items | jsonify | safeJS }}</script>
+{{- else if ne .Kind "404" -}}
+  {{- /*
+    A page is a page: describe it as such, and point it at the site. Business
+    properties (address, price range, opening hours) belong to the page that
+    actually describes a business or a property, never to every URL of the site.
+  */ -}}
+  {{- if .IsHome -}}
+    {{- $home := dict "@context" "https://schema.org" "@type" "WebSite" "name" .Site.Title "url" .Site.BaseURL -}}
+    {{- with (or .Site.Params.description .Description) -}}
+      {{- $home = merge $home (dict "description" .) -}}
+    {{- end -}}
+    {{- with .Language -}}
+      {{- $home = merge $home (dict "inLanguage" .Lang) -}}
+    {{- end -}}
+    <script type="application/ld+json">{{ $home | jsonify | safeJS }}</script>
+  {{- else -}}
+    {{- $page := dict "@context" "https://schema.org" "@type" "WebPage" "name" .Title "url" .Permalink "isPartOf" $website -}}
+    {{- with .Description -}}
+      {{- $page = merge $page (dict "description" .) -}}
+    {{- end -}}
+    {{- with .Language -}}
+      {{- $page = merge $page (dict "inLanguage" .Lang) -}}
+    {{- end -}}
+    <script type="application/ld+json">{{ $page | jsonify | safeJS }}</script>
+  {{- end -}}
+{{- end -}}
