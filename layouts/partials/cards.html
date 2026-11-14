@@ -20,9 +20,10 @@
 
     <a class="property-media" href="{{ .RelPermalink }}" tabindex="-1">
       {{ with .Resources.Get "featured-image.jpg" | or (.Resources.Get "card.jpg") }}
-        {{ $large := .Resize "1200x webp q80" }}
-        {{ $medium := .Resize "800x webp q80" }}
-        {{ $small := .Resize "480x webp q78" }}
+        {{- $oriented := partial "oriented-image.html" . }}
+        {{ $large := $oriented.Resize "1200x webp q80" }}
+        {{ $medium := $oriented.Resize "800x webp q80" }}
+        {{ $small := $oriented.Resize "480x webp q78" }}
         <img class="property-image"
              src="{{ $medium.RelPermalink }}"
              srcset="{{ $small.RelPermalink }} {{ $small.Width }}w, {{ $medium.RelPermalink }} {{ $medium.Width }}w, {{ $large.RelPermalink }} {{ $large.Width }}w"

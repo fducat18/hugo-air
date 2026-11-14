@@ -82,9 +82,10 @@
        unquoted, and base64 padding ('=') is invalid in an unquoted value. */}}
   <div class="headerImage{{ if .Resources.Get "featured-image.jpg" }} has-lqip{{ end }}">
     {{ with .Resources.Get "featured-image.jpg" }}
-      {{ $large := .Resize "1600x webp q78" }}
-      {{ $medium := .Resize "1000x webp q78" }}
-      {{ $small := .Resize "600x webp q75" }}
+      {{- $oriented := partial "oriented-image.html" . }}
+      {{ $large := $oriented.Resize "1600x webp q78" }}
+      {{ $medium := $oriented.Resize "1000x webp q78" }}
+      {{ $small := $oriented.Resize "600x webp q75" }}
       <img class="header-image"
            src="{{ $medium.RelPermalink }}"
            srcset="{{ $small.RelPermalink }} {{ $small.Width }}w, {{ $medium.RelPermalink }} {{ $medium.Width }}w, {{ $large.RelPermalink }} {{ $large.Width }}w"

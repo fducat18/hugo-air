@@ -1,0 +1,26 @@
+{{/*
+  Returns an image resource, rotated per its Exif orientation tag when needed.
+
+  Hugo drops the Exif block when it re-encodes an image, so a photo stored
+  sideways with `Orientation = 6` (or 8) would come out rotated once processed:
+  the browser no longer sees the tag and cannot compensate. Baking the rotation
+  into the pixels before any Resize/Fill/Fit fixes it for every output format.
+
+  The re-encode is skipped when the image is upright (Orientation = 1) or has no
+  Exif block, so the 99% of photos that are already correct keep their original
+  bytes and no generation loss is introduced.
+
+  Usage: {{ $img := partial "oriented-image.html" . }}
+*/}}
+{{ $src := . }}
+{{ $out := $src }}
+{{ if eq $src.MediaType.SubType "jpeg" }}
+  {{ with $src.Exif }}
+    {{ with .Tags.Orientation }}
+      {{ if ne (int .) 1 }}
+        {{ $out = $src.Filter (images.AutoOrient) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ return $out }}

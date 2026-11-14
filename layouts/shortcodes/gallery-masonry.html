@@ -6,8 +6,9 @@
     {{ $images := .Resources.ByType "image" }}
     {{ range $images }}
 
-    {{ $image := .Resize "960x webp" }}
-    {{ $img_tmb := .Resize "400x webp" }}
+    {{- $oriented := partial "oriented-image.html" . }}
+    {{ $image := $oriented.Resize "960x webp" }}
+    {{ $img_tmb := $oriented.Resize "400x webp" }}
   
     <div class="col-12 col-md-4 col-lg-3 mb-4">
       <div class="card-columns">

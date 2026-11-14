@@ -63,7 +63,7 @@
        header.html only adds the .has-lqip class; the opaque <img> covers this
        as soon as it paints. -->
   {{ with .Resources.Get "featured-image.jpg" }}
-    {{ $blur := .Resize "32x q30 webp" }}
+    {{ $blur := (partial "oriented-image.html" .).Resize "32x q30 webp" }}
     <style>.headerImage.has-lqip{background-image:url(data:image/webp;base64,{{ $blur.Content | base64Encode }});background-size:cover;background-position:center}</style>
   {{ end }}
 

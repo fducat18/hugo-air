@@ -2,7 +2,8 @@
   {{- $images := .Resources.ByType "image" -}}
   {{ range $image := $images }}
 
-  {{- $image := $image.Resize "960x webp q75" -}}
+  {{- $image = partial "oriented-image.html" $image -}}
+  {{- $image = $image.Resize "960x webp q75" -}}
   {{- $img_tmb := "" -}}
 
   {{- /* if width is greater than height */ -}}
